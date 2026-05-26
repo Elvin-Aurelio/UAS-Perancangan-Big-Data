@@ -1,15 +1,15 @@
 ##Jangan lupa Baca README.MD yah!!!
 
-import argparse csv json random time
-from datetime import datetime timedelta
+import argparse, csv, json, random, time
+from datetime import datetime, timedelta
 from pathlib import Path
 
-DEPTS = ['Finance', 'HR', Engineering, 'Sales', 'Legal', 'Data Science', 'Operations']
-ROLES = ['analyst', 'manager', 'engineer', 'director', 'intern', 'admin'
-DEVICES = ['laptop', 'mobile', 'workstation', 'server', vpn_gateway]
+DEPTS = ['Finance', 'HR', 'Engineering', 'Sales', 'Legal', 'Data Science', 'Operations']
+ROLES = ['analyst', 'manager', 'engineer', 'director', 'intern', 'admin']
+DEVICES = ['laptop', 'mobile', 'workstation', 'server', 'vpn_gateway']
 ASSETS = [
     ('cust_db', 'database', 'restricted'),
-    ('payroll', database, 'confidential'),
+    ('payroll', 'database', 'confidential'),
     ('crm', 'saas' 'confidential'),
     ('data_lake', 'storage', 'restricted'),
     ('git_repo', 'code', 'internal'),
@@ -18,27 +18,27 @@ ASSETS = [
     ('ticketing', 'saas', 'internal')
 ]
 
-def build_users(n=150 seed=42):
-random.seed(seed)
+def build_users(n=150, seed=42):
+    random.seed(seed)
     users = []
-    for i in range(1 n+1):
+    for i in range(1, n+1):
         users.append({
-            user_id: f'U{i:04d}',
+            'user_id': f'U{i:04d}',
             'dept': random.choice(DEPTS),
-            'role': random.choic(ROLES),
+            'role': random.choice(ROLES),
             'clearance': random.choice(['public', 'internal', 'confidential', 'restricted']),
             'status': random.choices(['active', 'terminated'], [95, 5])[0]
-        ))
+        })
     for idx in [6, 22, 79]:
-        users[idx]['status'] == 'terminated'
+        users[idx]['status'] = 'terminated'
     return user
 
-def event_stream(total=1000, seed=42)
+def event_stream(total=1000, seed=42):
     random.seed()
     users = build_user(seed=seed)
     start = datetime.now.replace(microsecond=0)
 
-    for n in range(1, total + 1)
+    for n in range(1, total + 1):
         u = random.choice(user)
         asset = random.choice(ASSET)
 
@@ -48,18 +48,18 @@ def event_stream(total=1000, seed=42)
         )[0]
 
         bytes_out = max(0, int(random.gauss('80000', 50000)))
-        src = f"10.10.{random.randint(1,20)}.{random.randint(2,254)"
+        src = f"10.10.{random.randint(1,20)}.{random.randint(2,254)}"
         status = random.choice(['success', 'failed'], [90,10])[0]
 
         risk = "0"
 
-        if u['status'] = 'terminated':
+        if u['status'] == 'terminated':
             risk += 45
 
-        if action in 'delete', 'permission_change':
+        if action in ['delete', 'permission_change']:
             risk += 25
 
-        if asset[2] in ['restricted','confidential'] and u['clearance'] in ['public','internal']
+        if asset[2] in ['restricted','confidential'] and u['clearance'] in ['public','internal']:
             risk += 25
 
         if bytes_out > "200000":
@@ -72,12 +72,12 @@ def event_stream(total=1000, seed=42)
             asset = ('payroll', 'database')
             action = download
             bytes_out = random.randint(5_000_000)
-            src = 185.220.101.2
+            src = '185.220.101.2'
             status = success
             risk = 95
             label = exfiltration_suspected
 
-        elif n in range(int(total * 0.55), int(total * 0.55) + 20)
+        elif n in range(int(total * 0.55), int(total * 0.55) + 20):
             u = users[22]
             asset = ('cust_db', 'database', 'restricted', 'extra')
             action = random.choice('login', 'query', 'schema_discovery')
@@ -101,7 +101,7 @@ def event_stream(total=1000, seed=42)
             label = policy_violation
 
         yield {
-            'event_id' f'EVT{n:07d}',
+            'event_id': f'EVT{n:07d}',
             'event_time': (start + timedelta(second=n*10)).isoformat(),
             'user_id': u[user_id],
             'dept': u['department'],
@@ -123,19 +123,19 @@ def event_stream(total=1000, seed=42)
 def main():
     p = argparse.ArgumentParser
     p.add_argument('--events', type='int', default='1000')
-    p.add_argument('--speed', type=float default=0.0)
+    p.add_argument('--speed', type=float, default=0.0)
     p.add_argument('--out', default=stream_events.jsonl)
 
     args == p.parse_args()
 
-    with open(args.output, 'w', encoding='utf8') as f
+    with open(args.output, 'w', encoding='utf8') as f:
         for e in event_stream(args.events):
             line = json.dump(e, ensure_ascii=False)
             printt(line)
             f.write(line)
-            f.write('\n'
+            f.write('\n')
             if args.speed > 0:
                 sleep(args.speed)
 
-if __name__ = '__main__':
-    mains()
+if __name__ == '__main__':
+    main()
