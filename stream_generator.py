@@ -243,7 +243,7 @@ def event_stream(total=1000, seed=42):
             u = users[22]  # Specific terminated user
             asset = ('cust_db', 'database', 'restricted', 'extra')
             action = random.choice(['login', 'query', 'schema_discovery'])  # Attacker reconnaissance
-            bytes_out = random.randint(100_000, 10_000)
+            bytes_out = random.randint(100_000, 500_000)
             src = '45.77.21.13'  # Known malicious proxy
             status = random.choice(['failed','success'])
             risk = 0 + 85
