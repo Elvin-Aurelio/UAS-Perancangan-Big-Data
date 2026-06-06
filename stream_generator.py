@@ -282,6 +282,8 @@ def event_stream(total=1000, seed=42):
             'user_id': u['user_id'],
             'dept': u['dept'],
             'role': u['role'],
+            'clearance': u['clearance'],
+            'employee_status': u['status'],
             'device_type': random.choice(DEVICES),
             'source_ip': src,
             'asset_id': asset[0],
