@@ -269,9 +269,9 @@ def event_stream(total=1000, seed=42):
             label = 'privilege_abuse'
 
         # ========== POLICY VIOLATION DETECTION ==========
-        # Jika baseline risk score >= 60, classify sebagai policy violation
+        # Jika baseline risk score >= 50, classify sebagai policy violation
         # Ini adalah normal activity tapi dengan high risk factors
-        elif risk >= 60:
+        elif risk >= 50:
             label = 'policy_violation'
 
         # ========== FINAL EVENT OBJECT ==========
