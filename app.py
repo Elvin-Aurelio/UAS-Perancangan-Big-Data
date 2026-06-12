@@ -20,8 +20,16 @@ from security_alert import generate_security_alert
 from stream_generator import event_stream
 
 
-def process_stream(total, speed, seed, progress_placeholder, status_placeholder, alert_preview_placeholder):
+def process_stream(total, speed, seed, progress_placeholder, status_placeholder, alert_preview_placeholder,
+                   latest_alert_limit=20, ui_update_interval=0.1):
     """Simulate a stream of events and classify alerts in realtime.
+
+    This function separates data processing from UI rendering. To avoid
+    excessive DOM updates and UI repainting, it collects alerts in a fixed
+    size `deque` and only updates the Streamlit placeholder at most once per
+    `ui_update_interval` seconds (i.e. throttling UI updates). This allows the
+    backend to process events at full speed while the frontend refreshes at a
+    bounded rate (for production use keep this <= 10 Hz).
 
     Args:
         total (int): Total number of synthetic events to generate.
@@ -30,21 +38,29 @@ def process_stream(total, speed, seed, progress_placeholder, status_placeholder,
         progress_placeholder: Streamlit placeholder for progress bar.
         status_placeholder: Streamlit placeholder for status text.
         alert_preview_placeholder: Streamlit placeholder for alert preview table.
+        latest_alert_limit (int): How many most-recent alerts to keep/show.
+        ui_update_interval (float): Minimum seconds between UI updates (throttle).
 
     Returns:
         tuple[pd.DataFrame, pd.DataFrame]: DataFrames for all events and generated alerts.
 
     The function keeps a rolling failed-login counter per user, evaluates every
-    event using `generate_security_alert`, and appends non-normal events to the
-    alert list for display.
+    event using `generate_security_alert`, and appends non-normal events to a
+    bounded alert deque for display. UI updates are throttled to avoid
+    repainting faster than `1 / ui_update_interval` Hz.
     """
     failed_logins = defaultdict(deque)
     events = []
-    alerts = []
+    # Use a bounded deque to prevent the DOM from growing unboundedly. The
+    # deque holds the N most recent alerts; the placeholder will render this
+    # deque as a small DataFrame. This prevents continuous `st.write` calls
+    # that append new DOM nodes and cause layout growth.
+    alerts = deque(maxlen=latest_alert_limit)
 
     progress_bar = progress_placeholder.progress(0)
     status = status_placeholder.text('Preparing stream...')
 
+    last_ui_update = time.time() - ui_update_interval
     for index, event in enumerate(event_stream(total, seed=42), start=1):
         event_time = datetime.fromisoformat(event['event_time'])
         user_id = event['user_id']
@@ -98,15 +114,30 @@ def process_stream(total, speed, seed, progress_placeholder, status_placeholder,
             progress_bar.progress(index / total)
             status.text(f'Processing event {index}/{total}...')
 
+        # Throttle UI updates to at most once per `ui_update_interval`.
+        now = time.time()
+        if now - last_ui_update >= ui_update_interval:
+            try:
+                # Convert the bounded deque to a DataFrame for rendering.
+                alert_preview_placeholder.dataframe(pd.DataFrame(list(alerts)))
+            except Exception:
+                # Rendering should not crash the processor loop; ignore UI errors
+                # and continue processing events.
+                pass
+            last_ui_update = now
+
         if speed > 0:
-            if index % max(1, total // 20) == 0 or index == total:
-                alert_preview_placeholder.dataframe(pd.DataFrame(alerts).head(20))
             time.sleep(speed)
 
     status.text('Stream simulation complete.')
-    alert_preview_placeholder.dataframe(pd.DataFrame(alerts).head(20))
+    # Final render: ensure UI shows the most recent alerts at the end.
+    try:
+        alert_preview_placeholder.dataframe(pd.DataFrame(list(alerts)))
+    except Exception:
+        pass
 
-    return pd.DataFrame(events), pd.DataFrame(alerts)
+    # Convert deque to a list for the return value to preserve shape.
+    return pd.DataFrame(events), pd.DataFrame(list(alerts))
 
 
 def main():
@@ -128,6 +159,13 @@ def main():
         speed = st.slider('Event delay (seconds)', min_value=0.0, max_value=1.0, value=0.05, step=0.05)
         # seed = st.number_input('User seed', min_value=1, max_value=9999, value=42, step=1)
         st.markdown('---')
+        st.subheader('UI Throttling & Preview')
+        latest_alerts = st.number_input('Latest alerts to show (N)', min_value=1, max_value=500, value=20, step=1,
+                                       help='Number of most-recent alerts to keep in the preview table (bounded deque).')
+        ui_refresh_hz = st.number_input('UI refresh rate (Hz)', min_value=1, max_value=60, value=10, step=1,
+                                       help='Maximum UI updates per second. Internally converted to a throttling interval.')
+        ui_update_interval = 1.0 / max(1, ui_refresh_hz)
+        st.markdown('---')
         st.write('Click **Run simulation** to generate a stream and display alerts.')
 
     run_simulation = st.button('Run simulation')
@@ -145,6 +183,8 @@ def main():
                 progress_placeholder=progress_placeholder,
                 status_placeholder=status_placeholder,
                 alert_preview_placeholder=alert_preview_placeholder,
+                latest_alert_limit=latest_alerts,
+                ui_update_interval=ui_update_interval,
             )
 
         st.success('Simulation finished successfully.')
@@ -174,9 +214,13 @@ def main():
             label_df = pd.DataFrame(
                 list(label_counts.items()), columns=['label', 'count']
             )
+            # Use joinaggregate to compute the total across the whole dataset
+            # before calculating per-row percentages. Using transform_window
+            # here can accidentally compute per-row totals (partitioned windows)
+            # which makes each slice compute percentage = count / count = 1.0.
             pie_chart = (
                 alt.Chart(label_df)
-                .transform_window(
+                .transform_joinaggregate(
                     total='sum(count)'
                 )
                 .transform_calculate(
@@ -193,10 +237,10 @@ def main():
                     ],
                 )
             )
-            pie_labels = pie_chart.mark_text(radius=110, size=12).encode(
-                text=alt.Text('percentage:Q', format='.1%')
-            )
-            st.altair_chart(pie_chart + pie_labels, use_container_width=True)
+            # pie_labels = pie_chart.mark_text(radius=110, size=12).encode(
+            #     text=alt.Text('percentage:Q', format='.1%')
+            # )
+            st.altair_chart(pie_chart, use_container_width=True)
         else:
             st.info('No event labels available yet.')
 

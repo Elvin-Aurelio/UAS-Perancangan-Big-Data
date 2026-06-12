@@ -269,9 +269,9 @@ def event_stream(total=1000, seed=42):
             label = 'privilege_abuse'
 
         # ========== POLICY VIOLATION DETECTION ==========
-        # Jika baseline risk score >= 60, classify sebagai policy violation
+        # Jika baseline risk score >= 50, classify sebagai policy violation
         # Ini adalah normal activity tapi dengan high risk factors
-        elif risk >= 60:
+        elif risk >= 50:
             label = 'policy_violation'
 
         # ========== FINAL EVENT OBJECT ==========
@@ -325,13 +325,15 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--events', type=int, default=1000, help='Number of events to generate')
     p.add_argument('--speed', type=float, default=0.0, help='Delay per event in seconds (0 = no delay)')
-    p.add_argument('--out', default='event_stream.jsonl', help='Output file path')
+    p.add_argument('--out', default='data/event_stream.jsonl', help='Output file path')
 
     args = p.parse_args()
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
     # ========== EVENT GENERATION & OUTPUT ==========
     # Buka file output untuk writing JSON Lines
-    with open(args.out, 'w', encoding='utf8') as f:
+    with open(out_path, 'w', encoding='utf8') as f:
         # Iterate melalui event stream generator
         for e in event_stream(args.events):
             # Convert event dict ke JSON string

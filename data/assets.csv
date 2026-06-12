@@ -1,0 +1,9 @@
+asset_id,asset_type,data_classification
+cust_db,database,restricted
+payroll,database,confidential
+crm,saas,confidential
+data_lake,storage,restricted
+git_repo,code,internal
+bi_dashboard,dashboard,internal
+public_web,web,public
+ticketing,saas,internal
