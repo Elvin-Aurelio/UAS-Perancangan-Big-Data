@@ -91,7 +91,7 @@ Proyek ini adalah sistem **Big Data Security Analytics** yang mensimulasikan akt
 
 ## Struktur File & Fungsi
 
-### 1. **stream_generator.py** (1,480 baris)
+### 1. **stream_generator.py**
 **Tujuan**: Menghasilkan synthetic security event stream yang realistis
 
 #### Komponen Utama:
@@ -179,7 +179,7 @@ Proyek ini adalah sistem **Big Data Security Analytics** yang mensimulasikan akt
 
 ---
 
-### 2. **security_alert.py** (138 baris)
+### 2. **security_alert.py** 
 **Tujuan**: Evaluasi alert rules dan threat severity scoring
 
 #### Fungsi Utama:
@@ -243,7 +243,7 @@ Model files (jika ada):
 
 ---
 
-### 3. **stream_processor.py** (75 baris)
+### 3. **stream_processor.py**
 **Tujuan**: Monitoring alert real-time di terminal (CLI)
 
 #### Fitur:
@@ -275,7 +275,7 @@ python stream_processor.py --events 1000 --speed 0.05
 
 ---
 
-### 4. **app.py** (257 baris)
+### 4. **app.py**
 **Tujuan**: Interactive dashboard monitoring dengan Streamlit
 
 #### Komponen Dashboard:
