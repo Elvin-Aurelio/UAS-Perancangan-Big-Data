@@ -1,8 +1,8 @@
-# UAS Perancangan Big Data - Security Analytics Platform 🔒
+# UAS Perancangan Big Data - Security Analytics Platform
 
 Platform simulasi dan monitoring real-time untuk **Data Security Analytics** dengan fokus pada deteksi anomali, streaming data, dan alert management.
 
-## 📋 Daftar Isi
+## Daftar Isi
 - [Gambaran Umum](#gambaran-umum)
 - [Arsitektur Sistem](#arsitektur-sistem)
 - [Struktur File & Fungsi](#struktur-file--fungsi)
@@ -13,7 +13,7 @@ Platform simulasi dan monitoring real-time untuk **Data Security Analytics** den
 
 ---
 
-## 🎯 Gambaran Umum
+## Gambaran Umum
 
 Proyek ini adalah sistem **Big Data Security Analytics** yang mensimulasikan aktivitas pengguna di dalam organisasi dan mendeteksi potensi ancaman keamanan secara real-time. Platform ini menggunakan kombinasi:
 
@@ -31,7 +31,7 @@ Proyek ini adalah sistem **Big Data Security Analytics** yang mensimulasikan akt
 
 ---
 
-## 🏗️ Arsitektur Sistem
+## Arsitektur Sistem
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -89,7 +89,7 @@ Proyek ini adalah sistem **Big Data Security Analytics** yang mensimulasikan akt
 
 ---
 
-## 📁 Struktur File & Fungsi
+## Struktur File & Fungsi
 
 ### 1. **stream_generator.py** (1,480 baris)
 **Tujuan**: Menghasilkan synthetic security event stream yang realistis
@@ -117,7 +117,7 @@ Proyek ini adalah sistem **Big Data Security Analytics** yang mensimulasikan akt
 
 #### Skenario Attack yang Disimulasikan:
 
-**🔴 Exfiltration (20% progress)**
+**Exfiltration (20% progress)**
 - User: Index 149 (compromised)
 - Asset: Payroll database
 - Action: Download massive data (5-15 MB)
@@ -125,7 +125,7 @@ Proyek ini adalah sistem **Big Data Security Analytics** yang mensimulasikan akt
 - Risk Score: 95
 - Label: `exfiltration_suspected`
 
-**🟠 Compromised Account (55% progress)**
+**Compromised Account (55% progress)**
 - User: Index 22 (terminated user)
 - Asset: Customer database
 - Actions: login, query, schema_discovery (reconnaissance)
@@ -133,7 +133,7 @@ Proyek ini adalah sistem **Big Data Security Analytics** yang mensimulasikan akt
 - Risk Score: 85
 - Label: `compromised_account`
 
-**🟡 Privilege Abuse (80% progress)**
+**Privilege Abuse (80% progress)**
 - User: Index 79 (terminated admin)
 - Asset: Git repository
 - Action: permission_change (escalation)
@@ -422,7 +422,7 @@ pip list
 
 #### 5. Verifikasi Dependencies untuk Python 3.13
 ```bash
-python -c "import streamlit; import pandas; import altair; import xgboost; print('✅ All dependencies imported successfully!')"
+python -c "import streamlit; import pandas; import altair; import xgboost; print('All dependencies imported successfully!')"
 ```
 
 #### 6. Create Data Directory (jika belum ada)
@@ -530,8 +530,8 @@ streamlit run app.py
 ### Kompatibilitas
 
 Platform ini dikembangkan dan ditest untuk:
-- ✅ Python 3.13.0+
-- ✅ Windows 10+, macOS 11+, Linux (Ubuntu 20.04+)
+- ✅ Python 3.13
+- ✅ Windows 10+
 - ✅ pip 24.0+
 
 ---
@@ -570,12 +570,6 @@ streamlit run app.py
 
 ---
 
-## 📞 Support & Questions
-
-Untuk pertanyaan atau issues, silakan buka GitHub Issues di repository ini.
-
----
-
 **Last Updated**: June 15, 2026  
 **Python Version**: 3.13  
-**Platform**: Cross-platform (Windows, macOS, Linux)
+**Platform**: Windows
