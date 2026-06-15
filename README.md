@@ -358,7 +358,7 @@ Menyimpan trained XGBoost models:
 
 ---
 
-## 🚀 Instalasi & Setup
+## Instalasi & Setup
 
 ### Prasyarat
 - **Python 3.13** atau lebih
@@ -433,7 +433,7 @@ mkdir -p model
 
 ---
 
-## 💻 Cara Penggunaan
+## Cara Penggunaan
 
 ### Opsi 1: Generate Event Stream & Simpan ke File
 
@@ -489,7 +489,7 @@ streamlit run app.py
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 
 ### 1. **Synthetic Data Generation** 
 ✅ Realistic user behavior patterns  
@@ -517,7 +517,7 @@ streamlit run app.py
 
 ---
 
-## 🛠️ Teknologi & Dependencies
+## Teknologi & Dependencies
 
 | Komponen | Versi | Fungsi |
 |----------|-------|--------|
@@ -536,7 +536,7 @@ Platform ini dikembangkan dan ditest untuk:
 
 ---
 
-## 📊 Contoh Workflow
+## Contoh Workflow
 
 ### Scenario: Analisis Exfiltration Attack
 
@@ -556,7 +556,7 @@ streamlit run app.py
 
 ---
 
-## 📝 Notes & Best Practices
+## Notes & Best Practices
 
 ### For Development
 - **Reproducible Results**: Gunakan `seed=42` untuk testing
